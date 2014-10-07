@@ -1,0 +1,35 @@
+# Links
+# http://facebook.github.io/react/
+# http://facebook.github.io/flux/docs/overview.html
+
+# Install gulp globally (probably already done)
+$ npm install -g gulp
+
+# Create a package.json if you don't have one
+$ npm init
+
+# Add wGulp as a dependency
+$ npm install webfilings/wGulp --save-dev
+
+# Create your initial gulpfile.js
+$ ./node_modules/.bin/gulp-init
+
+# Initialize jspm
+$ jspm init
+$ jspm install react
+$ jspm install
+
+
+$ http-server // to serve it up
+
+Your Mission:
+1) Add a new component that lets the user add their own items
+    <form onSubmit="">
+        Find this later:
+        <input type="text" placeholder="new thing" ref="name" />
+        <input type="text" placeholder="and it&#39;s place" ref="location" />
+        <input type="submit" value="Post" />
+    </form>
+
+
+2) Set up your gulpfile.js so that gulp bundles your project
