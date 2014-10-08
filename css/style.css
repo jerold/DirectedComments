@@ -64,7 +64,7 @@ body {
     color: #0094ff;
 }
 
-.linkingList ul {
+.userList {
     border: 1px solid #ddd;
     border-radius: 10px;
     background-color: #ddd;
@@ -74,7 +74,7 @@ body {
     margin: 10px;
 }
 
-.linkingList li {
+.userList li {
     height: 25px;
     line-height: 25px;
 }
@@ -84,16 +84,16 @@ ul {
     list-style-type: none;
 }
 
-li:first-child {
-    border-top: 1px solid #ddd;
-}
-
 li {
     padding-left: 30px;
     height: 40px;
     line-height: 40px;
-    border-bottom: 1px solid #ddd;
+    border-top: 1px solid #ccc;
     opacity: 0.8;
+}
+
+li:first-child {
+    border-top: 0px solid #ccc;
 }
 
 li:hover {
