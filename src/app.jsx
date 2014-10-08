@@ -5,7 +5,7 @@ var UserList = React.createClass({
     render: function() {
         return <ul className='searchList'>
             { this.props.users.map(function(user) {
-                return <li key={user.id}>{user.name} <span className='userId'>{user.id}</span></li>
+                return <li key={user.id}><span className='userId'>{user.id}</span> - {user.name}</li>
             }) }
         </ul>;
     }
@@ -14,70 +14,101 @@ var UserList = React.createClass({
 var TextEditBox = React.createClass({
     getInitialState: function() {
         return {
-            userSearchString: '',
+            searchString: '',
             linking: false,
             linkedUsers: []
         };
     },
 
-    lastInnerElementType: function(element) {
-        var wordObj = {theWord: element, isLink: false};
-        if (element.indexOf('\@') === 0) {
-            wordObj.theWord = element.slice(1);
+    usersMatchingWord: function(theWord) {
+        var searchString = theWord.trim().toLowerCase();
+        var matches = this.props.userList.filter(function(f) {
+            return f.name.toLowerCase().match( searchString );
+        });
+        return matches;
+    },
+
+    wordType: function(element) {
+        var wordObj = {theWord: element, isLink: false, theUser: null};
+        if (element.length > 0 && element.indexOf('\@') === 0) {
+            var word = element.slice(1);
+            var users = this.usersMatchingWord(word);
+            wordObj.theWord = word;
             wordObj.isLink = true;
+            if (users.length === 1) {
+                wordObj.theUser = users[0];
+            }
         }
         return wordObj;
     },
 
-    handleTextChange: function(event) {
-        console.log(event.which);
-        var wordArray = event.target.innerHTML
+    wordsFromHTML: function(theHTML) {
+        var wordArray = theHTML
             .replace('\&nbsp;', ' ')
             .replace(/<\/?[^>]+(>|$)/g, ' ')
+            .replace(/(?:[\(\)\-&$#!\[\]{}\"\',\.]+(?:\s|$)|(?:^|\s)[\(\)\-&$#!\[\]{}\"\',\.]+)/g, ' ')
             .split(' ');
-        wordArray = wordArray.filter(function(f) {
-            return (f.length > 0);
-        });
-        // console.log(wordArray);
-        var lastElement = wordArray.slice(-1)[0];
-        var lastWord = this.lastInnerElementType(lastElement);
-        if (lastWord.isLink) {
+        return wordArray;
+    },
+
+    linkArrayFromWords: function(theWords) {
+        var linkArray = theWords       
+            .filter(function(f) { return (f.length > 0); }) // remove non-words
+            .map(this.wordType)                             // get type for each word
+            .filter(function(f) { return f.isLink; });      // remove non-links
+        return linkArray;
+    },
+
+    userArrayFromLinks: function(theLinks) {
+        var userArray = theLinks.map(function(f) { return f.theUser; });
+        var ids = {};
+        var uniqueUsers = [];
+        for (var i = 0; i < userArray.length; i++) {
+            if (userArray[i] && !ids[userArray[i].id]) {
+                ids[userArray[i].id] = true;
+                uniqueUsers.push(userArray[i]);
+            }
+        }
+        return uniqueUsers;
+    },
+
+    handleTextChange: function(event) {
+        var wordArray = this.wordsFromHTML(event.target.innerHTML);
+        var linkArray = this.linkArrayFromWords(wordArray);
+        console.log(linkArray);
+        if (linkArray.length > 0 && !linkArray[linkArray.length-1].theUser) {
             this.setState({
-                userSearchString: lastWord.theWord,
-                linking: lastWord.isLink
+                searchString: linkArray[linkArray.length-1].theWord,
+                linking: true
             });
         } else {
             this.setState({
-                userSearchString: '',
-                linking: lastWord.isLink
+                searchString: '',
+                linking: false
             });
         }
+        this.setState({linkedUsers: this.userArrayFromLinks(linkArray)});
     },
 
     render: function() {
-        var allUsers;
+        var linkingUserSearch;
         if (this.state.linking) {
-            var foundUsers = this.props.userList,
-                searchString = this.state.userSearchString.trim().toLowerCase();
-
-            if (searchString.length > 0) {
-                foundUsers = foundUsers.filter(function(f) {
-                    return f.name.toLowerCase().match( searchString );
-                });
-            }
-
-            allUsers = <UserList users={foundUsers} />;
+            var matchingUsers = this.usersMatchingWord(this.state.searchString),
+            linkingUserSearch = <div className='linkingList'><UserList users={matchingUsers} /></div>;
         }
 
-        document.eventHan
+        var linkedUsers;
+        if (this.state.linkedUsers.length > 0) {
+            linkedUsers = <div className='linkingList'><UserList users={this.state.linkedUsers} /></div>;
+        }
 
         return <div className='textEditBox'>
             <div className='compositionBox'
                 contentEditable='true'
                 onInput={this.handleTextChange}
                 onBlur={this.handleTextChange} />
-            <UserList users={this.state.linkedUsers} />
-            {allUsers}
+            {linkingUserSearch}
+            {linkedUsers}
         </div>;
     }
 });

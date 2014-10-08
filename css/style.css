@@ -26,12 +26,11 @@ body {
 
 .textEditBox {
     width: 500px;
-    margin-top: 100px;
+    margin-top: 200px;
     margin-bottom: 20px;
     margin-left: auto;
     margin-right: auto;
 
-    padding-bottom: 20px;
     border-radius: 20px;
     border: 1px solid #4d4d4d;
     background-color: #ededed;
@@ -49,7 +48,6 @@ body {
     border-radius: 10px;
     background-color: #fff;
 
-    font-family: 'Raleway', sans-serif;
     font-size: 13pt;
     padding: 4px;
     margin: 10px;
@@ -64,6 +62,21 @@ body {
 
 .userId {
     color: #0094ff;
+}
+
+.linkingList ul {
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    background-color: #ddd;
+
+    font-size: 12pt;
+    padding: 4px;
+    margin: 10px;
+}
+
+.linkingList li {
+    height: 25px;
+    line-height: 25px;
 }
 
 ul {
@@ -87,9 +100,4 @@ li:hover {
     transition: 0.2s ease;
     padding-left: 32px;
     opacity: 1.0;
-}
-
-
-li:nth-child(odd) {
-    background-color: #efefef;
 }
