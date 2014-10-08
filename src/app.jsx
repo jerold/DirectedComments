@@ -22,10 +22,6 @@ var TextEditBox = React.createClass({
 
     lastInnerElementType: function(element) {
         var wordObj = {theWord: element, isLink: false};
-        console.log(element + ' ' + element.indexOf('\@'));
-        if (element.indexOf('\&nbsp;') === 0) {
-            return wordObj;
-        }
         if (element.indexOf('\@') === 0) {
             wordObj.theWord = element.slice(1);
             wordObj.isLink = true;
@@ -34,7 +30,16 @@ var TextEditBox = React.createClass({
     },
 
     handleTextChange: function(event) {
-        var lastElement = event.target.innerHTML.split(' ').slice(-1)[0];
+        console.log(event.which);
+        var wordArray = event.target.innerHTML
+            .replace('\&nbsp;', ' ')
+            .replace(/<\/?[^>]+(>|$)/g, ' ')
+            .split(' ');
+        wordArray = wordArray.filter(function(f) {
+            return (f.length > 0);
+        });
+        // console.log(wordArray);
+        var lastElement = wordArray.slice(-1)[0];
         var lastWord = this.lastInnerElementType(lastElement);
         if (lastWord.isLink) {
             this.setState({
@@ -47,9 +52,6 @@ var TextEditBox = React.createClass({
                 linking: lastWord.isLink
             });
         }
-        console.log('Change');
-        console.log(lastElement);
-        console.log(lastWord);
     },
 
     render: function() {
@@ -59,13 +61,15 @@ var TextEditBox = React.createClass({
                 searchString = this.state.userSearchString.trim().toLowerCase();
 
             if (searchString.length > 0) {
-                foundUsers = foundUsers.filter(function(f){
+                foundUsers = foundUsers.filter(function(f) {
                     return f.name.toLowerCase().match( searchString );
                 });
             }
 
             allUsers = <UserList users={foundUsers} />;
         }
+
+        document.eventHan
 
         return <div className='textEditBox'>
             <div className='compositionBox'
@@ -79,11 +83,11 @@ var TextEditBox = React.createClass({
 });
 
 var userNames = [
-    {name:'Colby', id:'12345'},
-    {name:'Jamal', id:'23456'},
-    {name:'Jerold', id:'34567'},
-    {name:'Josh', id:'45678'},
-    {name:'Lindsey', id:'56789'},
+    {name:'Jerold Albertson', id:'1'},
+    {name:'Lindsey Hanna', id:'2'},
+    {name:'Jamal Martin', id:'3'},
+    {name:'Colby Natale', id:'4'},
+    {name:'Josh Schlick', id:'5'},
 ]
 
 React.renderComponent(
